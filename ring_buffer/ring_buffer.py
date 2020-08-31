@@ -1,26 +1,24 @@
 class RingBuffer:
     def __init__(self, capacity):
-        self.max = capacity
         self.data = []
+        self.capacity = capacity
+        num_items = 0
+        oldest = None
 
-
-    class __Full:
-        # class that implements a full buffer 
-        def append(self, x):
-            # Append an element overwriting the oldest one. 
-            self.data[self.cur] = x
-            self.cur = (self.cur+1) % self.max
-        def get(self):
-            # return list of elements in correct order 
-            return self.data[self.cur:]+self.data[:self.cur]
-
-    def append(self,x):
-       # append an element at the end of the buffer
-        self.data.append(x)
-        if len(self.data) == self.max:
-            self.cur = 0
-            # Permanently change self's class from non-full to full
-            self.__class__ = self.__Full
+    def append(self, item):
+        if self.data:
+            if self.num_items < self.capacity:
+                self.data.append(item)
+                self.num_items += 1
+            else:
+                self.data[self.oldest] = item
+                self.oldest += 1
+                if self.oldest >= self.capacity:
+                    self.oldest = 0
+        else:
+            self.data.append(item)
+            self.oldest = 0
+            self.num_items = 1
 
     def get(self):
         # Return a list of elements from the oldest to the newest. 
